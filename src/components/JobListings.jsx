@@ -1,9 +1,8 @@
 /* eslint-disable react/prop-types */
 import {useState, useEffect} from 'react'
-
-
 import JobListing from './JobListing';
 import jobs from '../jobs.json'
+import Spinner from './Spinner';
 
 const JobsListings = ({isHome = false}) => {
 
@@ -12,9 +11,9 @@ const JobsListings = ({isHome = false}) => {
 
   useEffect(() => {
     const fetchJobs = async () => {
-  
+      const apiUrl = isHome ? '/api/jobs?_limit=3' : '/api/jobs';
       try {
-        const res = await fetch('http://localhost:8000/jobs');
+        const res = await fetch(apiUrl);
         const data = await res.json();
         setJobs(data);
       } catch (error) {
@@ -29,18 +28,22 @@ const JobsListings = ({isHome = false}) => {
 
   return (
     <section className='bg-blue-50 px-4 py-10'>
-      <div className='container-xl lg:container m-auto'>
-        <h2 className='text-3xl font-bold text-indigo-500 text-center mb-6'>
-          {isHome ? 'Recent Jobs' : 'Browse Jobs'}
-        </h2>
+    <div className='container-xl lg:container m-auto'>
+      <h2 className='text-3xl font-bold text-indigo-500 mb-6 text-center'>
+        {isHome ? 'Recent Jobs' : 'Browse Jobs'}
+      </h2>
+
+      {loading ? (
+        <Spinner loading={loading} />
+      ) : (
         <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-          {/* Використовуємо map для відображення кожного елементу з jobs.json */}
-          {jobs.map((job, ) => (
-              <JobListing key={job.id} job={job}/>
+          {jobs.map((job) => (
+            <JobListing key={job.id} job={job} />
           ))}
         </div>
-      </div>
-    </section>
+      )}
+    </div>
+  </section>
   );
 };
 
